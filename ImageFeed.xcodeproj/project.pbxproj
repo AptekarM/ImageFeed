@@ -22,6 +22,7 @@
 		4BFD17F12C3717230071197D /* OAuth2Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFD17F02C3717230071197D /* OAuth2Service.swift */; };
 		4BFD17F32C371D750071197D /* OAuth2TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFD17F22C371D750071197D /* OAuth2TokenStorage.swift */; };
 		4BFD17F62C3721B50071197D /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFD17F52C3721B50071197D /* SplashViewController.swift */; };
+		4BFD17F82C3821030071197D /* OAuthTokenResponseBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFD17F72C3821020071197D /* OAuthTokenResponseBody.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		4BFD17F02C3717230071197D /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
 		4BFD17F22C371D750071197D /* OAuth2TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TokenStorage.swift; sourceTree = "<group>"; };
 		4BFD17F52C3721B50071197D /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		4BFD17F72C3821020071197D /* OAuthTokenResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthTokenResponseBody.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +140,7 @@
 			children = (
 				4BFD17F02C3717230071197D /* OAuth2Service.swift */,
 				4BFD17F22C371D750071197D /* OAuth2TokenStorage.swift */,
+				4BFD17F72C3821020071197D /* OAuthTokenResponseBody.swift */,
 			);
 			path = OAuth2;
 			sourceTree = "<group>";
@@ -226,6 +229,7 @@
 				4B7E59B62C033C6C0000717E /* ProfileViewController.swift in Sources */,
 				4BFD17F62C3721B50071197D /* SplashViewController.swift in Sources */,
 				4B3654582BE393650003E2D8 /* AppDelegate.swift in Sources */,
+				4BFD17F82C3821030071197D /* OAuthTokenResponseBody.swift in Sources */,
 				4BFD17F32C371D750071197D /* OAuth2TokenStorage.swift in Sources */,
 				4B28A2EE2C1B4621009B4DEC /* AuthViewController.swift in Sources */,
 				4B28A2EB2C1B196B009B4DEC /* Constants.swift in Sources */,

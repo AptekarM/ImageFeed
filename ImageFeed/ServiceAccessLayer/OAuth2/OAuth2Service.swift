@@ -27,9 +27,9 @@ class OAuth2Service {
         let bodyParameters = [
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": redirectURI,
-            "client_id": accessKey,
-            "client_secret": secretKey
+            "redirect_uri": Constants.redirectURI,
+            "client_id": Constants.accessKey,
+            "client_secret": Constants.secretKey
         ]
         
         guard let httpBody = bodyParameters
@@ -80,17 +80,9 @@ class OAuth2Service {
             }
 
             do {
-                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                   let token = json["access_token"] as? String {
-                    DispatchQueue.main.async {
-                        completion(.success(token))
-                    }
-                } else {
-                    let error = NSError(domain: "Invalid token", code: -1, userInfo: nil)
-                    DispatchQueue.main.async {
-                        print("Error: Invalid token in response")
-                        completion(.failure(error))
-                    }
+                let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(responseBody.accessToken))
                 }
             } catch {
                 DispatchQueue.main.async {
