@@ -10,12 +10,80 @@ import Foundation
 class OAuth2Service {
     static let shared = OAuth2Service()
 
-    private init() {}
+    private let operationQueue = OperationQueue()
+    private var currentTokenRequest: TokenRequestOperation?
+
+    private init() {
+        operationQueue.maxConcurrentOperationCount = 1
+    }
 
     func fetchAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        cancelTokenRequest()
+        
+        let newRequest = TokenRequestOperation(code: code) { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+        
+        currentTokenRequest = newRequest
+        operationQueue.addOperation(newRequest)
+    }
+
+    func objectTask<T: Codable>(for request: URLRequest, objectType: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                let error = NSError(domain: "Invalid response", code: -1, userInfo: nil)
+                completion(.failure(error))
+                return
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let error = NSError(domain: "HTTP error", code: httpResponse.statusCode, userInfo: nil)
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else {
+                let error = NSError(domain: "No data", code: -1, userInfo: nil)
+                completion(.failure(error))
+                return
+            }
+            
+            do {
+                let decodedObject = try JSONDecoder().decode(T.self, from: data)
+                completion(.success(decodedObject))
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
+    }
+
+    func cancelTokenRequest() {
+        currentTokenRequest?.cancel()
+    }
+}
+class TokenRequestOperation: Operation {
+    private let code: String
+    private let completion: (Result<String, Error>) -> Void
+    
+    init(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        self.code = code
+        self.completion = completion
+    }
+    
+    override func main() {
+        if isCancelled {
+            return
+        }
+        
         guard let url = URL(string: "https://unsplash.com/oauth/token") else {
             let error = NSError(domain: "Invalid URL", code: -1, userInfo: nil)
-            print("Error creating URL: \(error)")
             completion(.failure(error))
             return
         }
@@ -37,61 +105,18 @@ class OAuth2Service {
             .joined(separator: "&")
             .data(using: .utf8) else {
                 let error = NSError(domain: "Invalid HTTP body", code: -1, userInfo: nil)
-                print("Error creating HTTP body: \(error)")
                 completion(.failure(error))
                 return
         }
         request.httpBody = httpBody
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                DispatchQueue.main.async {
-                    print("Network error: \(error)")
-                    completion(.failure(error))
-                }
-                return
-            }
-
-            guard let httpResponse = response as? HTTPURLResponse else {
-                let error = NSError(domain: "Invalid response", code: -1, userInfo: nil)
-                DispatchQueue.main.async {
-                    print("Error casting response to HTTPURLResponse: \(error)")
-                    completion(.failure(error))
-                }
-                return
-            }
-
-            guard (200...299).contains(httpResponse.statusCode) else {
-                let error = NSError(domain: "HTTP error", code: httpResponse.statusCode, userInfo: nil)
-                DispatchQueue.main.async {
-                    print("HTTP error with status code: \(httpResponse.statusCode), response: \(httpResponse)")
-                    completion(.failure(error))
-                }
-                return
-            }
-
-            guard let data = data else {
-                let error = NSError(domain: "No data", code: -1, userInfo: nil)
-                DispatchQueue.main.async {
-                    print("Error: No data received")
-                    completion(.failure(error))
-                }
-                return
-            }
-
-            do {
-                let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                DispatchQueue.main.async {
-                    completion(.success(responseBody.accessToken))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    print("Decoding error: \(error)")
-                    completion(.failure(error))
-                }
+        OAuth2Service.shared.objectTask(for: request, objectType: OAuthTokenResponseBody.self) { (result: Result<OAuthTokenResponseBody, Error>) in
+            switch result {
+            case .success(let responseBody):
+                self.completion(.success(responseBody.accessToken))
+            case .failure(let error):
+                self.completion(.failure(error))
             }
         }
-
-        task.resume()
     }
 }
