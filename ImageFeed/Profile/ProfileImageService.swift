@@ -96,3 +96,4 @@ final class ProfileImageService {
         currentTask = task
     }
 }
+

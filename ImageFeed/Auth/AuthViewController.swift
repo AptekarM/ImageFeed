@@ -59,3 +59,4 @@ extension AuthViewController: WebViewViewControllerDelegate {
         present(alert, animated: true, completion: nil)
     }
 }
+

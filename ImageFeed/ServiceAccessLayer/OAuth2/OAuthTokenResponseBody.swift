@@ -20,3 +20,4 @@ struct OAuthTokenResponseBody: Codable {
         case createdAt = "created_at"
     }
 }
+

@@ -203,7 +203,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="auth_screen_logo" translatesAutoresizingMaskIntoConstraints="NO" id="Vug-9e-c3G">
-                                <rect key="frame" x="166.66666666666666" y="442.66666666666669" width="60" height="60"/>
+                                <rect key="frame" x="166.66666666666666" y="430.66666666666669" width="60" height="60"/>
                                 <color key="backgroundColor" name="YP Black (iOS)"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="Aoo-ob-56v"/>
@@ -214,9 +214,8 @@
                                 <rect key="frame" x="16" y="743" width="361" height="48"/>
                                 <color key="backgroundColor" name="YP White (iOS)"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="CLV-9U-gio"/>
-                                    <constraint firstAttribute="height" constant="48" id="IXe-Lq-Uic"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="361" id="XW9-f6-BDj"/>
+                                    <constraint firstAttribute="width" constant="361" id="Ycj-xV-J50"/>
+                                    <constraint firstAttribute="height" constant="48" id="d1D-1o-djW"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -237,12 +236,11 @@
                         <viewLayoutGuide key="safeArea" id="gLz-eR-I9V"/>
                         <color key="backgroundColor" name="YP Black (iOS)"/>
                         <constraints>
-                            <constraint firstItem="HkH-1g-tfW" firstAttribute="top" secondItem="gLz-eR-I9V" secondAttribute="top" constant="640" id="3n6-FZ-NRE"/>
-                            <constraint firstItem="gLz-eR-I9V" firstAttribute="bottom" secondItem="HkH-1g-tfW" secondAttribute="bottom" constant="120" id="MlG-Ql-3Js"/>
-                            <constraint firstItem="HkH-1g-tfW" firstAttribute="leading" secondItem="gLz-eR-I9V" secondAttribute="leading" constant="16" id="Ptx-2f-SN2"/>
-                            <constraint firstItem="Vug-9e-c3G" firstAttribute="centerX" secondItem="md3-qZ-M2e" secondAttribute="centerX" id="Qq0-Rg-pe6"/>
-                            <constraint firstItem="Vug-9e-c3G" firstAttribute="centerX" secondItem="HkH-1g-tfW" secondAttribute="centerX" id="S7O-Xw-gpM"/>
-                            <constraint firstItem="Vug-9e-c3G" firstAttribute="centerY" secondItem="md3-qZ-M2e" secondAttribute="centerY" id="q1E-Mz-G46"/>
+                            <constraint firstItem="Vug-9e-c3G" firstAttribute="centerY" secondItem="gLz-eR-I9V" secondAttribute="centerY" id="27W-LU-JwA"/>
+                            <constraint firstItem="gLz-eR-I9V" firstAttribute="trailing" secondItem="HkH-1g-tfW" secondAttribute="trailing" constant="16" id="Y6o-aI-4xl"/>
+                            <constraint firstItem="Vug-9e-c3G" firstAttribute="centerX" secondItem="gLz-eR-I9V" secondAttribute="centerX" id="YXr-ft-E3G"/>
+                            <constraint firstItem="HkH-1g-tfW" firstAttribute="top" secondItem="md3-qZ-M2e" secondAttribute="topMargin" constant="640" id="dg5-Iy-xMA"/>
+                            <constraint firstItem="HkH-1g-tfW" firstAttribute="leading" secondItem="gLz-eR-I9V" secondAttribute="leading" constant="16" id="e0E-mh-n1i"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="04E-Iz-ECG"/>
