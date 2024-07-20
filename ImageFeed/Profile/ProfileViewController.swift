@@ -65,10 +65,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupUI() {
-
         view.backgroundColor = .ypBlackIOS
 
-        let ProfileImage = UIImage()
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
@@ -77,7 +75,6 @@ final class ProfileViewController: UIViewController {
         imageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
        
-        
         self.profileImageView = imageView
         
         let nameLabel = UILabel()
@@ -119,11 +116,29 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapButton() {
-        for view in view.subviews {
-            if view is UILabel {
-                view.removeFromSuperview()
-            }
+        showLogoutConfirmation()
+    }
+    
+    private func showLogoutConfirmation() {
+        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
+        
+        let yesAction = UIAlertAction(title: "Да", style: .default) { _ in
+            ProfileLogoutService.shared.logout()
+            self.navigateToSplashViewController()
         }
+        
+        let noAction = UIAlertAction(title: "Нет", style: .default, handler: nil)
+        
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func navigateToSplashViewController() {
+        let splashVC = SplashViewController()
+        splashVC.modalPresentationStyle = .fullScreen
+        present(splashVC, animated: true, completion: nil)
     }
     
     deinit {
@@ -132,4 +147,3 @@ final class ProfileViewController: UIViewController {
         }
     }
 }
-
