@@ -13,9 +13,9 @@ protocol ImagesListCellDelegate: AnyObject {
 final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     
-    @IBOutlet var cellImage: UIImageView!
-    @IBOutlet var likeButton: UIButton!
-    @IBOutlet var dateLabel: UILabel!
+    @IBOutlet private var cellImage: UIImageView!
+    @IBOutlet private var likeButton: UIButton!
+    @IBOutlet private var dateLabel: UILabel!
     
     weak var delegate: ImagesListCellDelegate?
     private var photoId: String?
@@ -27,7 +27,7 @@ final class ImagesListCell: UITableViewCell {
         photoId = nil
     }
     
-    @IBAction func likeButtonTapped(_ sender: UIButton) {
+    @IBAction private func likeButtonTapped(_ sender: UIButton) {
         
         guard let photoId = photoId else { return }
         delegate?.imageListCellDidTapLike(self)

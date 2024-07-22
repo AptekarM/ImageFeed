@@ -14,32 +14,32 @@ final class ImagesListViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
     
     private let imagesListService = ImagesListService()
-        private var photos: [Photo] = []
-        
+    private var photos: [Photo] = []
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM yyyy"
         formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            
-            tableView.delegate = self
-            tableView.dataSource = self
-            
-            NotificationCenter.default.addObserver(self, selector: #selector(updateTableViewAnimated), name: ImagesListService.didChangeNotification, object: nil)
-            
-            imagesListService.fetchPhotosNextPage()
-            
-            DispatchQueue.main.async {
-                self.tableView.rowHeight = UITableView.automaticDimension
-                self.tableView.estimatedRowHeight = 200
-                self.tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-            }
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTableViewAnimated), name: ImagesListService.didChangeNotification, object: nil)
+        
+        imagesListService.fetchPhotosNextPage()
+        
+        DispatchQueue.main.async {
+            self.tableView.rowHeight = UITableView.automaticDimension
+            self.tableView.estimatedRowHeight = 200
+            self.tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         }
-        
+    }
+    
     @objc private func updateTableViewAnimated() {
         let startIndex = photos.count
         let newPhotos = imagesListService.photos
@@ -106,13 +106,15 @@ extension ImagesListViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as! ImagesListCell
-        
-        let photo = photos[indexPath.row]
-        cell.delegate = self
-        cell.configure(with: photo, dateFormatter: dateFormatter)
-        
-        return cell
+        if let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as? ImagesListCell {
+            let photo = photos[indexPath.row]
+            cell.delegate = self
+            cell.configure(with: photo, dateFormatter: dateFormatter)
+            
+            return cell
+        } else {
+            fatalError("Could not dequeue cell with identifier: \(ImagesListCell.reuseIdentifier)")
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
