@@ -21,13 +21,13 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private var imageView: UIImageView!
     
     override func viewDidLoad() {
-            super.viewDidLoad()
-            scrollView.minimumZoomScale = 0.1
-            scrollView.maximumZoomScale = 1.25
-            scrollView.delegate = self
-
-                loadImage()
-            }
+        super.viewDidLoad()
+        scrollView.minimumZoomScale = 0.1
+        scrollView.maximumZoomScale = 1.25
+        scrollView.delegate = self
+        
+        loadImage()
+    }
     
     @IBAction private func didTapBackButton() {
         dismiss(animated: true, completion: nil)
@@ -35,32 +35,32 @@ final class SingleImageViewController: UIViewController {
     
     @IBAction func didTapShareButton(_ sender: UIButton) {
         guard let image = imageView.image else { return }
-                let share = UIActivityViewController(
-                    activityItems: [image],
-                    applicationActivities: nil
-                )
-                present(share, animated: true, completion: nil)
+        let share = UIActivityViewController(
+            activityItems: [image],
+            applicationActivities: nil
+        )
+        present(share, animated: true, completion: nil)
+    }
+    
+    private func loadImage() {
+        guard let fullImageUrl = fullImageUrl, let url = URL(string: fullImageUrl) else { return }
+        
+        UIBlockingProgressHUD.show() // Показать индикатор загрузки
+        imageView.kf.setImage(with: url, completionHandler: { [weak self] result in
+            UIBlockingProgressHUD.dismiss() // Скрыть индикатор загрузки
+            guard let self = self else { return }
+            switch result {
+            case .success(let value):
+                self.imageView.image = value.image
+                self.imageView.frame.size = value.image.size
+                self.rescaleAndCenterImageInScrollView(image: value.image)
+            case .failure(let error):
+                print("Ошибка: \(error)")
+                self.showError()
             }
-            
-            private func loadImage() {
-                guard let fullImageUrl = fullImageUrl, let url = URL(string: fullImageUrl) else { return }
-                
-                UIBlockingProgressHUD.show() // Показать индикатор загрузки
-                imageView.kf.setImage(with: url, completionHandler: { [weak self] result in
-                    UIBlockingProgressHUD.dismiss() // Скрыть индикатор загрузки
-                    guard let self = self else { return }
-                    switch result {
-                    case .success(let value):
-                        self.imageView.image = value.image
-                        self.imageView.frame.size = value.image.size
-                        self.rescaleAndCenterImageInScrollView(image: value.image)
-                    case .failure(let error):
-                        print("Ошибка: \(error)")
-                        self.showError()
-                    }
-                })
-            }
-            
+        })
+    }
+    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
         let maxZoomScale = scrollView.maximumZoomScale
@@ -81,28 +81,28 @@ final class SingleImageViewController: UIViewController {
         // Устанавливаем смещение, чтобы изображение было центрировано по горизонтали и заполняло высоту
         scrollView.setContentOffset(CGPoint(x: x, y: 0), animated: false)
     }
-            
-            private func showError() {
-                let alertController = UIAlertController(
-                    title: "Ошибка",
-                    message: "Что-то пошло не так. Попробовать ещё раз?",
-                    preferredStyle: .alert
-                )
-                
-                let cancelAction = UIAlertAction(title: "Не надо", style: .cancel, handler: nil)
-                let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-                    self?.loadImage()
-                }
-                
-                alertController.addAction(cancelAction)
-                alertController.addAction(retryAction)
-                
-                present(alertController, animated: true, completion: nil)
-            }
+    
+    private func showError() {
+        let alertController = UIAlertController(
+            title: "Ошибка",
+            message: "Что-то пошло не так. Попробовать ещё раз?",
+            preferredStyle: .alert
+        )
+        
+        let cancelAction = UIAlertAction(title: "Не надо", style: .cancel, handler: nil)
+        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            self?.loadImage()
         }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(retryAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+}
 
-        extension SingleImageViewController: UIScrollViewDelegate {
-            func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-                imageView
-            }
-        }
+extension SingleImageViewController: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        imageView
+    }
+}

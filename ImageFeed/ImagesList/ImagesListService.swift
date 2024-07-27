@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ImagesListService {
+class ImagesListService {
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
     var photos: [Photo] = []
