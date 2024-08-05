@@ -7,30 +7,16 @@
 
 import Foundation
 
-final class ProfileService {
+final class ProfileService: ProfileServiceProtocol {
     static let shared = ProfileService()
     
     private init() {}
-
+    
     struct ProfileResult: Codable {
         let username: String
         let first_name: String
         let last_name: String?
         let bio: String?
-    }
-    
-    struct Profile: Codable {
-        let username: String
-        let name: String
-        let loginName: String
-        let bio: String
-        
-        init(from profileResult: ProfileResult) {
-            self.username = profileResult.username
-            self.name = "\(profileResult.first_name) \(profileResult.last_name ?? "")"
-            self.loginName = "@\(profileResult.username)"
-            self.bio = profileResult.bio ?? ""
-        }
     }
     
     private(set) var profile: Profile?
@@ -46,7 +32,7 @@ final class ProfileService {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
-
+    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         guard let request = createProfileRequest(with: token) else {
             let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid request"])
@@ -97,5 +83,3 @@ final class ProfileService {
         task.resume()
     }
 }
-
-

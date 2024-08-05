@@ -11,12 +11,12 @@ final class SplashViewController: UIViewController {
     private let splashImageView = UIImageView(image: UIImage(named: "auth_screen_logo"))
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let oauth2TokenStorage = OAuth2TokenStorage.shared
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -26,16 +26,16 @@ final class SplashViewController: UIViewController {
             presentAuthViewController()
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
     }
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
-
+    
     private func setupUI() {
         view.backgroundColor = .ypBlackIOS
         splashImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +46,7 @@ final class SplashViewController: UIViewController {
             splashImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
-
+    
     private func switchToTabBarController() {
         DispatchQueue.main.async {
             guard let window = UIApplication.shared.windows.first else {
@@ -92,7 +92,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             self.fetchOAuthToken(code)
         }
     }
-
+    
     private func fetchOAuthToken(_ code: String) {
         OAuth2Service.shared.fetchAuthToken(with: code) { [weak self] result in
             guard let self = self else { return }

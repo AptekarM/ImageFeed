@@ -5,19 +5,18 @@
 //  Created by Maksim  on 04.07.2024.
 //
 
-
 import Foundation
 
 class OAuth2Service {
     static let shared = OAuth2Service()
-
+    
     private let operationQueue = OperationQueue()
     private var currentTokenRequest: TokenRequestOperation?
-
+    
     private init() {
         operationQueue.maxConcurrentOperationCount = 1
     }
-
+    
     func fetchAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
         cancelTokenRequest()
         
@@ -30,7 +29,7 @@ class OAuth2Service {
         currentTokenRequest = newRequest
         operationQueue.addOperation(newRequest)
     }
-
+    
     func objectTask<T: Codable>(for request: URLRequest, objectType: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
@@ -64,7 +63,7 @@ class OAuth2Service {
             }
         }.resume()
     }
-
+    
     func cancelTokenRequest() {
         currentTokenRequest?.cancel()
     }
@@ -88,11 +87,11 @@ class TokenRequestOperation: Operation {
             completion(.failure(error))
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-
+        
         let bodyParameters = [
             "grant_type": "authorization_code",
             "code": code,
@@ -105,12 +104,12 @@ class TokenRequestOperation: Operation {
             .map({ "\($0.key)=\($0.value)" })
             .joined(separator: "&")
             .data(using: .utf8) else {
-                let error = NSError(domain: "Invalid HTTP body", code: -1, userInfo: nil)
-                completion(.failure(error))
-                return
+            let error = NSError(domain: "Invalid HTTP body", code: -1, userInfo: nil)
+            completion(.failure(error))
+            return
         }
         request.httpBody = httpBody
-
+        
         OAuth2Service.shared.objectTask(for: request, objectType: OAuthTokenResponseBody.self) { (result: Result<OAuthTokenResponseBody, Error>) in
             switch result {
             case .success(let responseBody):

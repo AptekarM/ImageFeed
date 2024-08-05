@@ -10,11 +10,26 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
-    private var nameLabel: UILabel?
-    private var loginNameLabel: UILabel?
-    private var descriptionLabel: UILabel?
-    private var profileImageView: UIImageView?
-    private var profileImageServiceObserver: NSObjectProtocol?
+    var nameLabel: UILabel?
+    var loginNameLabel: UILabel?
+    var descriptionLabel: UILabel?
+    var profileImageView: UIImageView?
+    var profileImageServiceObserver: NSObjectProtocol?
+    
+    let profileService: ProfileServiceProtocol
+    let profileImageService: ProfileImageServiceProtocol
+    let profileLogoutService: ProfileLogoutServiceProtocol
+    
+    init(profileService: ProfileServiceProtocol, profileImageService: ProfileImageServiceProtocol, profileLogoutService: ProfileLogoutServiceProtocol) {
+        self.profileService = profileService
+        self.profileImageService = profileImageService
+        self.profileLogoutService = profileLogoutService
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,20 +49,19 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
     
-    private func updateProfileDetails() {
-        guard let profile = ProfileService.shared.profile else { return }
+    func updateProfileDetails() {
+        guard let profile = profileService.profile else { return }
         nameLabel?.text = profile.name
         loginNameLabel?.text = profile.loginName
         descriptionLabel?.text = profile.bio
     }
     
-    private func updateAvatar() {
-        guard let profileImageURL = ProfileImageService.shared.avatarURL,
+    func updateAvatar() {
+        guard let profileImageURL = profileImageService.avatarURL,
               let url = URL(string: profileImageURL)
         else { return }
         
         let placeholderImage = UIImage(named: "placeholder.jpeg")
-        
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
         
         profileImageView?.kf.setImage(
@@ -59,14 +73,13 @@ final class ProfileViewController: UIViewController {
                 .backgroundDecode,
                 .forceRefresh,
                 .scaleFactor(UIScreen.main.scale)
-                
             ]
         )
     }
     
-    private func setupUI() {
+    func setupUI() {
         view.backgroundColor = .ypBlackIOS
-
+        
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
@@ -74,7 +87,7 @@ final class ProfileViewController: UIViewController {
         imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 52).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
-       
+        
         self.profileImageView = imageView
         
         let nameLabel = UILabel()
@@ -115,16 +128,16 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc
-    private func didTapButton() {
+    func didTapButton() {
         showLogoutConfirmation()
     }
     
-    private func showLogoutConfirmation() {
+    func showLogoutConfirmation() {
         let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
         
         let yesAction = UIAlertAction(title: "Да", style: .default) { [weak self] _ in
             guard let self = self else { return }
-            ProfileLogoutService.shared.logout()
+            self.profileLogoutService.logout()
             self.navigateToSplashViewController()
         }
         
@@ -136,7 +149,7 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    private func navigateToSplashViewController() {
+    func navigateToSplashViewController() {
         let splashVC = SplashViewController()
         splashVC.modalPresentationStyle = .fullScreen
         present(splashVC, animated: true, completion: nil)
